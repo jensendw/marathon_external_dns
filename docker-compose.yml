@@ -1,0 +1,12 @@
+version: '2'
+services:
+  marathon-external-dns:
+    image: jensendw/marathon-external-dns
+    environment:
+      - MARATHON_URL=http://localhost:8080
+      - MESOS_DNS_DOMAIN=marathon.somedomain.com
+      - CNAME_ZONE=somedomain.com
+      - AWS_REGION=us-west-2
+      - UPDATE_INTERVAL=60
+      - AWS_ACCESS_KEY_ID=XXXXXXX
+      - AWS_SECRET_ACCESS_KEY=YYYYYYYYY
