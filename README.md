@@ -35,7 +35,7 @@ I run this app as a marathon service with a scale of 1.
   "container": {
     "type": "DOCKER",
     "docker": {
-      "image": "jensendw/marathon-external-dns:latest"
+      "image": "jensendw/marathon_external_dns:latest"
     }
   },
   "env": {
