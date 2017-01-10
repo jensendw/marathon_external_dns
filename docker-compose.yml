@@ -10,3 +10,4 @@ services:
       - UPDATE_INTERVAL=60
       - AWS_ACCESS_KEY_ID=XXXXXXX
       - AWS_SECRET_ACCESS_KEY=YYYYYYYYY
+      - DRY_RUN=False

@@ -1,2 +1,4 @@
 marathon==0.8.9
 boto==2.38.0
+dnspython=1.15.0
+schedule=0.3.2

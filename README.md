@@ -5,7 +5,7 @@ The marathon external DNS service searches Marathon for services that have an en
 
 ## Setup
 
-See the rancher-compose.yml for what environment variables need to be set, an explanation of each variable is noted below:
+See the docker-compose.yml for what environment variables need to be set, an explanation of each variable is noted below:
 
 * MARATHON_URL
 ** The URL of the marathon server
@@ -21,6 +21,8 @@ See the rancher-compose.yml for what environment variables need to be set, an ex
 ** AWS access key with the appropriate permissions
 * AWS_SECRET_ACCESS_KEY
 ** AWS secret key with the appropriate permissions
+* DRY_RUN
+** Set to True if you want the script to simply output what action it would take
 
 ## Deployment
 
