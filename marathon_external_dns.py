@@ -6,6 +6,8 @@ import os
 import time
 import dns.resolver
 import logging
+import requests
+import json
 
 # Get necessary environment variables
 
@@ -15,6 +17,7 @@ CNAME_ZONE = os.getenv('CNAME_ZONE', 'mydomain.com')
 AWS_REGION = os.getenv('AWS_REGION', 'us-west-2')
 UPDATE_INTERVAL = os.getenv('UPDATE_INTERVAL', 60)
 DRY_RUN = os.getenv('DRY_RUN', False)
+DUPLICATE_ENTRY_SLACK_WEBHOOK = os.getenv('DUPLICATE_ENTRY_SLACK_WEBHOOK', 'https://hooks.slack.com/services/xxxxxxxxx/xxxxxx/xxxxxxxxxxxxxx')
 
 # Convert UPDATE_INTERVAL to the correct type
 UPDATE_INTERVAL = float(UPDATE_INTERVAL)
@@ -24,7 +27,6 @@ DRY_RUN = bool(DRY_RUN)
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - [%(levelname)s] - %(message)s')
 logger = logging.getLogger()
 
-logging.info("im stupid! %s", 'really stupid')
 def gen_mesos_dns_entry(app_id):
     appid_array = app_id[1:].split('/')
     appid_array.reverse()
@@ -56,6 +58,13 @@ def get_dns_entries(marathon_url):
         for app in c.list_apps():
             if 'MARATHON_DNS' in app.env:
                 logging.info("Found DNS entry: %s for application id: %s", app.env['MARATHON_DNS'], app.id)
+                if app.env['MARATHON_DNS'] in dns_entries.keys():
+                    logging.error("Duplicate MARATHON_DNS entry found, DNS entry: %s for ID: %s", app.env['MARATHON_DNS'], app.id)
+                    logging.error("Mesos DNS entry: %s conflicts with App ID: %s", dns_entries[app.env['MARATHON_DNS']], app.id)
+                    post_data = {'username': 'marathon_external_dns', 'icon_emoji': ':ghost:', 'text': 'Mesos DNS entry: {} conflicts with App ID: {}'.format(dns_entries[app.env['MARATHON_DNS']], app.id)}
+                    response = requests.post(DUPLICATE_ENTRY_SLACK_WEBHOOK, data=json.dumps(post_data))
+                    if response.status_code != 200:
+                        logging.error("200 not received from slack, got the following response: %s", response.text)
                 dns_entries[app.env['MARATHON_DNS']] = gen_mesos_dns_entry(app.id)
         return dns_entries
     except marathon.exceptions.MarathonError as err:
@@ -92,7 +101,7 @@ try:
             for key in dns_entries:
                 if not does_target_exist(key, dns_entries[key]):
                     if DRY_RUN is True:
-                        logging.info("DRY RUN ENABLED: Would have create CNAME: %s with target %s", key, dns_entries[key])
+                        logging.info("DRY RUN ENABLED: Would have created CNAME: %s with target %s", key, dns_entries[key])
                     else:
                         add_route53_cname(key, dns_entries[key])
             time.sleep(UPDATE_INTERVAL)

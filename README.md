@@ -23,6 +23,8 @@ See the docker-compose.yml for what environment variables need to be set, an exp
 ** AWS secret key with the appropriate permissions
 * DRY_RUN
 ** Set to True if you want the script to simply output what action it would take
+* DUPLICATE_ENTRY_SLACK_WEBHOOK
+** This is the slack webhook that is used to notify you when there are multiple marathon applications using the same MARATHON_DNS entry
 
 ## Deployment
 
@@ -47,7 +49,8 @@ I run this app as a marathon service with a scale of 1.
     "CNAME_ZONE": "somedomain.com",
     "UPDATE_INTERVAL": 60,
     "AWS_ACCESS_KEY_ID": "XXX",
-    "AWS_SECRET_ACCESS_KEY": "YYY"
+    "AWS_SECRET_ACCESS_KEY": "YYY",
+    "DUPLICATE_ENTRY_SLACK_WEBHOOK": "https://hooks.slack.com/services/xxxxxxxxx/xxxxxx/xxxxxxxxxxxxxx"
   }
 }
 ```
