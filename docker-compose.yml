@@ -11,3 +11,4 @@ services:
       - AWS_ACCESS_KEY_ID=XXXXXXX
       - AWS_SECRET_ACCESS_KEY=YYYYYYYYY
       - DRY_RUN=False
+      - DUPLICATE_ENTRY_SLACK_WEBHOOK=https://hooks.slack.com/services/xxxxxxxxx/xxxxxx/xxxxxxxxxxxxxx
